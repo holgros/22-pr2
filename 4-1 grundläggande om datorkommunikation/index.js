@@ -1,4 +1,4 @@
-let app = require('express')();
+let app = require("express")();
 let port = 3000;
 
 app.get("/", function(req, res) {
@@ -6,16 +6,14 @@ app.get("/", function(req, res) {
     res.sendFile(__dirname + "/klient.html");
 });
 
-app.listen(port, () => {
+let httpServer = app.listen(port, () => {
     console.log(`Webbserver körs på port ${port}`)
 });
 
-/*
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
-app.use('/public', express.static(__dirname + '/public' ));
+let io = require('socket.io')(httpServer);
 
-io.on("click", function() {
-    console.log("Någon klickade!");
+io.on("connection", function(socket) {
+    socket.on("click", function() {
+        console.log("Någon klickade!");
+    });
 });
-*/
