@@ -16,11 +16,16 @@ def threaded_client(connection):    # Definierar vad tråden ska göra
         msg = "Servern tog emot följande meddelande: " \
               + data.decode("utf-16")
         print(msg)
-        connection.send(msg.encode("utf-16"))
+        for c in connections:
+            try:
+                c.send(msg.encode('utf-16'))
+            except: # ifall klienten inte kan nås
+                connections.remove(c)
 
 from _thread import *
 s = start_server()
 ThreadCount = 0
+connections = []
 while True: # Skapar en ny tråd för varje klient som ansluter
     print("Väntar på att en klient ska ansluta till servern...")
     conn, address = s.accept()
@@ -28,4 +33,5 @@ while True: # Skapar en ny tråd för varje klient som ansluter
           + str(address[1]))
     start_new_thread(threaded_client, (conn, ))
     ThreadCount += 1
+    connections.append(conn)
     print("Tråd nummer: " + str(ThreadCount))
